@@ -6,11 +6,8 @@
   <meta name="description" content="Tiny JavaScript helper for fingerprint (biometric) authentication using WebAuthn. No frameworks. Works on Android, Windows Hello, macOS Touch ID.">
   <meta name="keywords" content="fingerprint, WebAuthn, biometrics, authentication, JS library, passwordless login">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <meta name="google-site-verification" content="aKCTvMKA28pmc6S4ANUKbvt6r2Phk3oYgAgkvc3gUTY" />
-  <!-- other tags -->
-
   <link rel="icon" href="finger.png">
+
   <!-- Open Graph -->
   <meta property="og:title" content="Finger.js – Lightweight Fingerprint JS Library">
   <meta property="og:description" content="Add fingerprint login to your site using one small JavaScript file.">
@@ -33,7 +30,7 @@
     "applicationCategory": "SecurityApplication",
     "operatingSystem": "All",
     "programmingLanguage": "JavaScript",
-    "softwareVersion": "1.0.0",
+    "softwareVersion": "1.1.0",
     "license": "MIT",
     "description": "Tiny WebAuthn fingerprint helper library for websites.",
     "url": "https://fingerjs.github.io/",
@@ -43,22 +40,13 @@
 
   <!-- Styles -->
   <style>
-    :root { 
-    --accent: black;
-  
-     
-    }
-    body   {
-     color-scheme: ;
-     font-family: system-ui, sans-serif; margin: 0; line-height: 1.6; 
-     
-     }
+    :root { --accent: black; }
+    body { font-family: system-ui, sans-serif; margin: 0; line-height: 1.6; }
     header { background: var(--accent); color: #fff; padding: 2.5rem 1rem; text-align: center; }
-    h1     { margin: 0 0 .25em; font-size: 2rem; }
-    main   { max-width: 860px; margin: auto; padding: 2rem 1rem; }
+    h1 { margin: 0 0 .25em; font-size: 2rem; }
+    main { max-width: 860px; margin: auto; padding: 2rem 1rem; }
     pre, code { background: #f4f4f4; padding: .6em; border-radius: 6px; }
-    pre    { overflow-x: auto; }
-
+    pre { overflow-x: auto; }
     .btn {
       background: var(--accent);
       color: #fff;
@@ -71,28 +59,25 @@
       display: inline-block;
     }
     .btn:hover { background: #0056b3; }
-
     .btn-group {
       display: flex;
       flex-wrap: wrap;
       gap: 1em;
       margin-bottom: 1em;
     }
-
     #output {
       background: #eef;
       padding: 1em;
-      min-height: 5em;
+      min-height: 4em;
       border-radius: 6px;
+      white-space: pre-wrap;
     }
-
     footer {
       text-align: center;
       padding: 2rem 1rem;
       font-size: 0.9rem;
       color: #555;
     }
-
     nav a {
       color: #fff;
       margin: 0 .5em;
@@ -125,21 +110,75 @@
 
     <!-- USAGE -->
     <section id="usage">
-      <h2>🚀 How to Use</h2>
-      <pre><code>&lt;script src="finger.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  finger().register(); // to register
-  finger().login();    // to login
-&lt;/script&gt;</code></pre>
+    <h2>🚀 How to Use</h2>
+    
+    <h3>🔹 Async/Await Example</h3>
+    <pre><code>&lt;script src="finger.js"&gt;&lt;/script&gt;
+    &lt;script&gt;
+    async function register() {
+    const id = await finger("#output").register();
+    if (id) alert("✅ Registered with ID: " + id);
+    }
+    
+    async function login() {
+    const ok = await finger("#output").login();
+    if (ok) alert("✅ Login successful!");
+    }
+    &lt;/script&gt;</code></pre>
+    
+    <h3>🔹 Classic Callback Example</h3>
+    <pre><code>&lt;script src="finger.js"&gt;&lt;/script&gt;
+    &lt;script&gt;
+    function register() {
+    finger("#output").register(function(id) {
+    if (id) alert("✅ Registered with ID: " + id);
+    });
+    }
+    
+    function login() {
+    finger("#output").login(function(ok) {
+    if (ok) alert("✅ Login OK!");
+    });
+    }
+    &lt;/script&gt;</code></pre>
     </section>
 
     <!-- DEMO -->
     <section id="demo">
-      <h2>🧪 Live Demo</h2>
+      <h2>🧪 Live Demo Examples</h2>
+
+      <h3>🔹 Async/Await (Modern)</h3>
       <div class="btn-group">
-        <button class="btn" onclick="finger().register()">Register Fingerprint</button>
-        <button class="btn" onclick="finger().login()">Login with Fingerprint</button>
+        <button class="btn" onclick="registerAsync()">Register</button>
+        <button class="btn" onclick="loginAsync()">Login</button>
       </div>
+      <pre><code>// Async/Await
+async function registerAsync() {
+  const result = await finger("#output").register();
+  if (result) alert("✅ Registered!");
+}
+async function loginAsync() {
+  const ok = await finger("#output").login();
+  if (ok) alert("✅ Login successful!");
+}</code></pre>
+
+      <h3>🔹 Traditional Callback (Classic)</h3>
+      <div class="btn-group">
+        <button class="btn" onclick="registerClassic()">Register</button>
+        <button class="btn" onclick="loginClassic()">Login</button>
+      </div>
+      <pre><code>// Classic Callbacks
+function registerClassic() {
+  finger("#output").register(function(result) {
+    if (result) alert("✅ Registered!");
+  });
+}
+function loginClassic() {
+  finger("#output").login(function(ok) {
+    if (ok) alert("✅ Login OK!");
+  });
+}</code></pre>
+
       <pre id="output"></pre>
     </section>
 
@@ -148,8 +187,8 @@
       <h2>📝 Notes</h2>
       <ul>
         <li>Use over <strong>HTTPS</strong> or <code>localhost</code></li>
-        <li>Supported on Android (Chrome), Windows Hello, macOS Touch ID, iOS 17+</li>
-        <li>In real apps: use a random <code>challenge</code> and store credentials server-side</li>
+        <li>Supports Android, Windows Hello, macOS Touch ID, iOS 17+</li>
+        <li>In real apps, use server-generated <code>challenge</code> for security</li>
       </ul>
     </section>
   </main>
@@ -158,9 +197,31 @@
     © <span id="year"></span> Finger.js — MIT License
   </footer>
 
-  <!-- Dynamic Year Script -->
+  <!-- Scripts -->
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    async function registerAsync() {
+      const result = await finger("#output").register();
+      if (result) alert("✅ Registered with Async!");
+    }
+
+    async function loginAsync() {
+      const ok = await finger("#output").login();
+      if (ok) alert("✅ Login OK (Async)!");
+    }
+
+    function registerClassic() {
+      finger("#output").register(function(result) {
+        if (result) alert("✅ Registered (Classic)!");
+      });
+    }
+
+    function loginClassic() {
+      finger("#output").login(function(ok) {
+        if (ok) alert("✅ Login OK (Classic)!");
+      });
+    }
   </script>
 </body>
 </html>
